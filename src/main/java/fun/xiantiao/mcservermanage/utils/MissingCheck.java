@@ -32,4 +32,8 @@ public class MissingCheck<T> {
         missing.removeAll(add);
         return missing;
     }
+
+    public String toString() {
+        return getMissing().toString();
+    }
 }
