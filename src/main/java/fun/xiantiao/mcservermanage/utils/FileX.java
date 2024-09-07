@@ -4,9 +4,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
+import java.util.List;
 
 import static fun.xiantiao.mcservermanage.Main.getLogger;
 
@@ -26,6 +27,50 @@ public class FileX extends File {
             fileXs[i] = new FileX(files[i]);
         }
         return fileXs;
+    }
+
+    /**
+     * 获取指定目录下的所有文件
+     *
+     * @param maxDepth      最大层级深度，-1 表示不限制
+     * @return 文件列表
+     */
+    public List<FileX> allListFiles(int maxDepth) {
+        List<FileX> fileList = new ArrayList<>();
+
+        // 创建一个访问器以遍历文件树
+        try {
+            Files.walkFileTree(this.toPath(), new SimpleFileVisitor<Path>() {
+                private int currentDepth = 0;
+
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                    // 检查是否超过最大层级深度
+                    if (maxDepth >= 0 && currentDepth > maxDepth) {
+                        return FileVisitResult.SKIP_SUBTREE;
+                    }
+                    currentDepth++;
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    FileX fileX = new FileX(file.toFile());
+                    fileList.add(fileX);
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                    currentDepth--;
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            getLogger().error(e);
+        }
+
+        return fileList;
     }
 
     public boolean renameTo(@NotNull String newPath) {
