@@ -1,6 +1,7 @@
 package fun.xiantiao.mcservermanage.impl;
 
 import fun.xiantiao.mcservermanage.api.Jar;
+import fun.xiantiao.mcservermanage.utils.FileX;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
@@ -77,5 +78,10 @@ public class JarImpl extends File implements Jar {
             return "读取资源时出错: " + e.getMessage();
         }
         return resourceContent.toString();
+    }
+
+    @Override
+    public FileX getFile() {
+        return new FileX(jarFilePath);
     }
 }

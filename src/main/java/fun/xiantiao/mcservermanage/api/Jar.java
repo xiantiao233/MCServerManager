@@ -1,5 +1,7 @@
 package fun.xiantiao.mcservermanage.api;
 
+import fun.xiantiao.mcservermanage.utils.FileX;
+
 import java.util.List;
 
 public interface Jar {
@@ -26,4 +28,6 @@ public interface Jar {
      * @return 资源内容的字符串
      */
     String readResourceFromClasspath(String resourcePath);
+
+    FileX getFile();
 }
